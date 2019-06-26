@@ -10,8 +10,9 @@ const Controles =() =>{
               <React.Fragment>
                 <button onClick={()=>context.changeSession("up")}>up</button>
                 <button onClick={()=>context.changeSession("down")}>down</button>
-                <button onClick={()=>context.startTimer()}>start</button>
-                <button onClick={()=>context.stopTimer()}>Stop</button>
+                <button onClick={()=>context.startTimer()}>&#9658;</button>
+                <button onClick={()=>context.pauseTimer()}>II</button>
+                <button onClick={()=>context.stopTimer()}>&#9632;</button>
               </React.Fragment>
             )
           }}

@@ -9,11 +9,6 @@ class App extends React.Component{
     return (
       <MyProvider>
         <div>App
-          <MyContext.Consumer>
-            {(value)=>{
-              return <h1>{value.session}</h1>
-            }}
-          </MyContext.Consumer>
           <Controles/>
           <Display/>
         </div>
