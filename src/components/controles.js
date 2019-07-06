@@ -7,13 +7,11 @@ const Controles =() =>{
         <MyContext.Consumer>
           {(context)=>{
             return(
-              <React.Fragment>
-                <button onClick={()=>context.changeSession("up")}>up</button>
-                <button onClick={()=>context.changeSession("down")}>down</button>
-                <button onClick={()=>context.startTimer()}>&#9658;</button>
-                <button onClick={()=>context.pauseTimer()}>II</button>
-                <button onClick={()=>context.stopTimer()}>&#9632;</button>
-              </React.Fragment>
+                <div className="flex">
+                  <button onClick={()=>context.startTimer()}><i className="fas fa-play"></i></button>
+                  <button onClick={()=>context.pauseTimer()}><i className="fas fa-pause"></i></button>
+                  <button onClick={()=>context.stopTimer()}><i className="fas fa-stop"></i></button>
+                </div>
             )
           }}
         </MyContext.Consumer>

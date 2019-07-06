@@ -3,64 +3,101 @@ import React from "react"
 export const MyContext = React.createContext()
 
 export class MyProvider extends React.Component{
-  constructor(props){
-    super(props)
-    // this.handleTimer= this.handleTimer.bind(this)
-    // // this.stopTimer= this.stopTimer.bind(this)
-  }
   state = {
-    session:0,
-    currentTime:0,
-    intervalId:undefined,
-    running:false
+    sessionTimer: {
+      minutes: 0,
+      seconds: 0
+    },
+    intervalId: undefined,
+    running: false,
+    editing: false,
+    completed:undefined
   }
-  sessionChange=(direction)=>{
-    if (direction==="up" && !this.state.running) {
-      this.setState({session:direction});
+  toggleEditing=()=>{
+    if (this.state.running) {
+      return
     }
-    else if(direction==="down" && !this.state.running) {
-      if (this.state.session!==0) {
-        this.setState({session:this.state.session-1});
+    this.setState({editing:!this.state.editing})
+  }
+  startTimer = () => {
+    const {minutes,seconds} = this.state.sessionTimer
+    if (this.state.running || this.state.editing || (minutes ==0 && seconds ==0)) {return}
+      const timerId = setInterval(() => {
+      const { sessionTimer } = this.state
+      const { minutes, seconds } = sessionTimer
+      if(seconds == 0 && minutes == 0) {
+        this.setState({ running: false,completed:true })
+        this.stopTimer()
+      } else {
+        if(seconds == 0) {
+          const timer = {
+            minutes: minutes - 1,
+            seconds: 59
+          }
+          this.setState({ sessionTimer: timer })
+        } else {
+            this.setState({
+              sessionTimer: {
+                minutes,
+                seconds: seconds - 1
+              }})
+        }
       }
+    }, 1000)
+    this.setState({ intervalId: timerId, running: true })
+
+  }
+
+  pauseTimer = () => {
+    if (this.state.running) {
+      clearInterval(this.state.intervalId)
+      this.setState({ running: false })
     }
   }
 
-  startTimer=()=>{
-    if (!this.state.running) {
-      const {session,currentTime} = this.state
-      let secs =currentTime?currentTime:session*60
-      let timer = setInterval(()=>{
-      if (secs!==0) {
-        secs--
-        this.setState({currentTime:secs,running:true})
-        const disMins = Math.floor(secs/60)
-        const disSecs = secs-Math.floor(secs/60)*60
-        if (disSecs<10) {
-          console.log(disMins,"0"+disSecs);
-        } else{
-          console.log(disMins,disSecs);
-        }
-      }
-    },1000)
-    this.setState({intervalId:timer,currentTime:secs})
-    }
-  }
-  pauseTimer = ()=>{
-    clearInterval(this.state.intervalId)
-    this.setState({running:false})
-  }
   stopTimer = ()=>{
+    if (this.state.editing) {
+      return;
+    }
     clearInterval(this.state.intervalId)
-    this.setState({currentTime:0,running:false,intervalId:undefined})
+    const newState = {
+      sessionTimer: {
+        minutes: 0,
+        seconds: 0
+      },
+      running: false,
+      intervalId: undefined
+    }
+    this.setState(newState)
+  }
+
+  onChangeMinutesInput = (event) => {
+      const newMinutes = event.target.value;
+      if(newMinutes < 0) return;
+      const { sessionTimer } = this.state
+      this.setState({ sessionTimer: { ...sessionTimer, minutes: newMinutes } })
+  }
+
+  onChangeSecondsInput = (event) => {
+    const newSeconds = event.target.value;
+    if(newSeconds < 0 || newSeconds >= 60) return;
+    const { sessionTimer } = this.state
+    this.setState({ sessionTimer: { ...sessionTimer, seconds:newSeconds } })
+  }
+  onSoundComplete = ()=>{
+    this.setState({completed:undefined})
   }
   render(){
-    console.log("render");
     return(
       <MyContext.Provider value={{...this.state,
-                                  changeSession:this.sessionChange,
+                                  //changeSession:this.sessionChange,
                                   startTimer:this.startTimer,
                                   pauseTimer:this.pauseTimer,
-                                  stopTimer:this.stopTimer
+                                  stopTimer:this.stopTimer,
+                                  onChangeMinutesInput: this.onChangeMinutesInput,
+                                  onChangeSecondsInput: this.onChangeSecondsInput,
+                                  toggleEditing:this.toggleEditing,
+                                  onSoundComplete:this.onSoundComplete
                                 }}>
         {this.props.children}
       </MyContext.Provider>

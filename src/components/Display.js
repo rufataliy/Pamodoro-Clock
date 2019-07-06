@@ -1,42 +1,80 @@
 import React from "react"
 import {MyContext} from "../context"
+import Sound from "./Sound"
 
 
 class Display extends React.Component{
-   constructor(props){
-     super(props)
-     this.minsRef = React.createRef()
-     this.secsRef = React.createRef()
-   }
-  changeSession=(elem)=>{
-    elem.current.setAttribute("type","number")
-    elem.current.removeAttribute("value")
-
+  state = {
+    isEditing: false
   }
-  onSubmit=(e)=>{
-    e.preventDefault();
-    this.minsRef.current.setAttribute("type","button");
-    this.secsRef.current.setAttribute("type","button");
+  changeShadowRed=()=>{
+    document.documentElement.style.setProperty('--shadow',"#fb043d");
+    document.querySelector("body").style.backgroundColor = "#ad3f65"
+  }
+  changeShadowBlue=()=>{
+    document.documentElement.style.setProperty('--shadow',"deepskyblue");
+    document.querySelector("body").style.backgroundColor = "#3b676d"
   }
   render(){
     return (
       <MyContext.Consumer>
-        {({currentTime,session,changeSession})=>{
-          let secs = currentTime-Math.floor(currentTime/60)*60
-          let mins = currentTime? Math.floor(currentTime/60):session
-          return <form onSubmit={this.onSubmit}>
-                  <input ref={this.minsRef}
-                        type="button"
-                        onClick={()=>this.changeSession(this.minsRef)}
+        {({
+          sessionTimer,
+          running,
+          onChangeMinutesInput,
+          onChangeSecondsInput,
+          toggleEditing,
+          editing,
+          completed,
+          onSoundComplete
+        }) => {
+          const { minutes, seconds } = sessionTimer
+          return <div>
+                  {!editing &&
+                    [
+                      <div className={seconds <= 10 && minutes == 0 && running ? this.changeShadowRed() : this.changeShadowBlue()}>
+                        <div className="flex">
+                          <input
+                            className="digits"
+                            type="button"
+                            onClick={toggleEditing}
+                            value={minutes}/>
 
-                        value={`${mins}`}/>
-                      <input ref={this.secsRef}
-                         type="button"
-                         onClick={()=>this.changeSession(this.secsRef)}
+                          <input
+                            className="digits"
+                            type="button"
+                            onClick={toggleEditing}
+                            value={seconds}/>
+                        </div>
+                       {completed===true &&
+                         <Sound onSoundComplete={onSoundComplete}/>
+                       }
+                      </div>
+                   ]
+                  }
+                  {editing && !running &&
+                    [
+                      <div className="flex">
+                        <input
+                          className="editing digits"
+                          type="text"
+                          onChange={onChangeMinutesInput}
+                          value={minutes}/>,
 
-                         value={`${secs>=10?secs:"0"+secs}`}/>
-                       <input type="submit"/>
-                </form>
+                        <input
+                          className="editing digits"
+                          type="text"
+                          onChange={onChangeSecondsInput}
+                          value={seconds}/>
+                      </div>
+                    ]
+                  }
+                  <input
+                    className="submit"
+                    type="button"
+                    value="SET"
+                    onClick={toggleEditing}/>
+                </div>
         }}
       </MyContext.Consumer>
     )

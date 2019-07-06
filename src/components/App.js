@@ -1,18 +1,21 @@
 import React from "react"
 import Controles from "./controles"
 import Display from "./Display"
-import {MyProvider, MyContext} from "../context.js"
+import {MyProvider} from "../context.js"
+import "../app.css"
 
 
 class App extends React.Component{
   render(){
     return (
-      <MyProvider>
-        <div>App
-          <Controles/>
-          <Display/>
-        </div>
-      </MyProvider>
+      <div className="wrapper">
+        <MyProvider>
+          <div>
+            <Controles/>
+            <Display/>
+          </div>
+        </MyProvider>
+      </div>
     )
   }
 }
