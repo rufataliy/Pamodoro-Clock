@@ -73,7 +73,7 @@ export class MyProvider extends React.Component{
 
   onChangeMinutesInput = (event) => {
       const newMinutes = event.target.value;
-      if(newMinutes < 0) return;
+      if(newMinutes < 0 ) return;
       const { sessionTimer } = this.state
       this.setState({ sessionTimer: { ...sessionTimer, minutes: newMinutes } })
   }

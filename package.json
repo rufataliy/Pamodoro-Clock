@@ -2,7 +2,7 @@
   "name": "alarm",
   "version": "0.1.0",
   "private": true,
-  "homapage": "https://github.com/rufataliy/Pamodoro-Clock",
+  "homapage": "https://github.com/rufataliy/Pamodoro-Clock/",
   "dependencies": {
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
